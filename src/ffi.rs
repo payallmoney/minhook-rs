@@ -6,10 +6,8 @@
 #![allow(dead_code)]
 
 use std::ptr;
-
-pub use winapi::{LPCSTR, LPCWSTR, LPVOID};
-
-
+pub use winapi::shared::minwindef::LPVOID;
+pub use winapi::shared::ntdef::{LPCSTR, LPCWSTR};
 
 /// MinHook Error Codes.
 #[must_use]
@@ -45,16 +43,12 @@ pub enum MH_STATUS {
     /// The specified module is not loaded.
     MH_ERROR_MODULE_NOT_FOUND,
     /// The specified function is not found.
-    MH_ERROR_FUNCTION_NOT_FOUND
+    MH_ERROR_FUNCTION_NOT_FOUND,
 }
-
-
 
 /// Can be passed as a parameter to `MH_EnableHook`, `MH_DisableHook`,
 /// `MH_QueueEnableHook` or `MH_QueueDisableHook`.
 pub const MH_ALL_HOOKS: LPVOID = ptr::null_mut();
-
-
 
 extern "system" {
     /// Initialize the MinHook library.
@@ -92,8 +86,12 @@ extern "system" {
     /// * `ppOriginal` - A pointer to the trampoline function, which will be
     ///                  used to call the original target function.
     ///                  This parameter can be `null`.
-    pub fn MH_CreateHookApi(pszModule: LPCWSTR, pszProcName: LPCSTR, pDetour: LPVOID,
-                            ppOriginal: *mut LPVOID) -> MH_STATUS;
+    pub fn MH_CreateHookApi(
+        pszModule: LPCWSTR,
+        pszProcName: LPCSTR,
+        pDetour: LPVOID,
+        ppOriginal: *mut LPVOID,
+    ) -> MH_STATUS;
 
     /// Creates a Hook for the specified API function, in disabled state.
     ///
@@ -110,8 +108,13 @@ extern "system" {
     /// * `ppTarget`   - A pointer to the target function, which will be used
     ///                  with other functions.
     ///                  This parameter can be `null`.
-    pub fn MH_CreateHookApiEx(pszModule: LPCWSTR, pszProcName: LPCSTR, pDetour: LPVOID,
-                              ppOriginal: *mut LPVOID, ppTarget: *mut LPVOID) -> MH_STATUS;
+    pub fn MH_CreateHookApiEx(
+        pszModule: LPCWSTR,
+        pszProcName: LPCSTR,
+        pDetour: LPVOID,
+        ppOriginal: *mut LPVOID,
+        ppTarget: *mut LPVOID,
+    ) -> MH_STATUS;
 
     /// Removes an already created hook.
     ///
